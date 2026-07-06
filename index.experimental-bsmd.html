@@ -440,39 +440,9 @@
       box-shadow: 0 12px 28px rgba(35,215,214,.3);
     }
 
-    .plan-hint {
-      margin-top: 12px;
-      padding: 13px 14px;
-      border-radius: 18px;
-      display: none;
-      font-size: 13.5px;
-      line-height: 1.48;
-      color: #071113;
-      background: rgba(251,255,253,.93);
-      border: 1px solid rgba(7,139,147,.24);
-      box-shadow: 0 10px 24px rgba(7,17,19,.10);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-    }
-    .plan-hint b {
-      display: block;
-      margin-top: 4px;
-      color: #063f45;
-      font-weight: 850;
-      line-height: 1.42;
-    }
-    .plan-hint button {
-      display: inline-flex;
-      align-items: center;
-      margin-top: 10px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      color: #061113;
-      background: linear-gradient(135deg, #9ffff7, var(--turquoise));
-      font-weight: 850;
-      font-size: 12.5px;
-      box-shadow: 0 8px 18px rgba(35,215,214,.22);
-    }
+    .plan-hint { margin-top: 10px; font-size: 12.5px; color: var(--muted-dark); display: none; line-height: 1.4; }
+    .plan-hint b { color: var(--turquoise-deep); font-weight: 800; }
+    .plan-hint button { display: block; color: var(--turquoise-deep); font-weight: 800; font-size: 12.5px; margin-top: 5px; }
 
     .toggle-row {
       display: flex;
@@ -1356,16 +1326,16 @@
       <section class="panel dark" id="focus">
         <div class="panel-inner">
           <span class="tag aqua">фокус</span>
-          <h2>Фокусная цель</h2>
+          <h2>БСМД и мои продукты</h2>
 
           <div class="focus-strip">
-            <p data-edit="focus-goal">Мой доход — от системы, которая продаёт с моим минимальным включением: с кайфом, комфортом и свободой.</p>
-            <small data-edit="focus-near">Ближайшая цель: за 3 месяца выйти на 100 000 ₽ в месяц — и закрепить.</small>
+            <p data-edit="focus-goal">Собираю БСМД, прохожу её на себе и превращаю в систему дохода на моих инфо-продуктах.</p>
+            <small data-edit="focus-near">Ближайшая цель: рабочая БСМД → моя стратегия → понятный маршрут к первым продажам.</small>
           </div>
 
           <div class="money-cards">
-            <div class="money-card"><small>Мишень 1 мес</small><strong>100 000 ₽</strong></div>
-            <div class="money-card"><small>Ориентир 3 мес</small><strong>300 000 ₽</strong></div>
+            <div class="money-card"><small>Сейчас</small><strong>БСМД</strong></div>
+            <div class="money-card"><small>Дальше</small><strong>Стратегия</strong></div>
           </div>
 
           <div class="revenue-block">
@@ -1374,7 +1344,7 @@
           </div>
 
           <div class="metric-row">
-            <div class="metric"><strong id="packPct">—</strong><small>упаковка MVP</small></div>
+            <div class="metric"><strong id="packPct">—</strong><small>сборка системы</small></div>
             <div class="metric"><strong id="daysSale">—</strong><small>дней до старта продаж</small></div>
             <div class="metric"><strong id="daysMvp">—</strong><small>дней до упаковки</small></div>
           </div>
@@ -1394,13 +1364,13 @@
               </div>
               <div class="counter">
                 <strong id="saleCount">0</strong>
-                <small>продаж · 3 = зашло</small>
+                <small>продаж · первые тесты</small>
                 <div class="btns"><button id="saleMinus">−</button><button class="plus" id="salePlus">+1</button></div>
               </div>
             </div>
 
             <div class="verdict" id="verdict"></div>
-            <p class="offer-rule" id="offerRule">Оффер засчитан, только если он настоящий и прямой. Поймала «я как бы намекнула» — это не оффер, это пряталась.</p>
+            <p class="offer-rule" id="offerRule">Сначала собираю рабочую систему. Продажи не через рывок, а через понятный маршрут, продукт и живой тест.</p>
 
             <details class="ladder-details">
               <summary>Вся лестница запуска</summary>
@@ -1534,7 +1504,7 @@
             <button class="sync-btn" id="syncBtn">Синхронизировать с таблицей</button>
             <div class="sync-status" id="syncStatus"></div>
             <button class="ghost-btn" id="exportBtn">Скопировать все данные — резервная копия</button>
-            <p class="sync-note">Синхронизация подтягивает фокус недели и пазлы дней из «МОЯ НЕДЕЛЯ». Один раз открой таблице доступ: «Все, у кого есть ссылка — Читатель». Отметки хранятся в облаке Telegram (или в этом браузере).</p>
+            <p class="sync-note">Сейчас отметки хранятся в облаке Telegram (или в этом браузере). Следующий слой — подключить таблицу/API, чтобы собирать историю, видеть динамику и кейс на себе.</p>
           </div>
         </div>
       </section>
@@ -1642,23 +1612,23 @@
 
     /* ---------- Лестница ---------- */
     const LADDER = [
-      { id: "s0", name: "Шаг 0 · MVP-порог", desc: "Довести БСМД до «уже можно дать человеку», а не «идеально».", offers: 0 },
-      { id: "s1", name: "Шаг 1 · Прогрев в ТГ", desc: "Посты из смыслов + «как родилась идея» → 4 оффера на чек-ап.", offers: 4 },
-      { id: "s2", name: "Шаг 2 · Бот + сторис", desc: "Рассылка по базе бота + сторис → 4 оффера.", offers: 4 },
-      { id: "s3", name: "Шаг 3 · Личные ЛС", desc: "15–20 живых приглашений тёплым. Самый сильный вход.", offers: 20 },
-      { id: "pb", name: "План Б · Интенсив", desc: "Бесплатный интенсив 1–3 дня + платные инструкции.", offers: 1 },
-      { id: "pc", name: "План В · Третий вход", desc: "Мини-продукт / коллаборация / платный мини-интенсив.", offers: 1 }
+      { id: "s0", name: "Шаг 0 · Черновик БСМД", desc: "Собрать рабочую логику модулей, без полировки до идеала.", offers: 0 },
+      { id: "s1", name: "Шаг 1 · Тест на себе", desc: "Пройти БСМД самой и собрать живой кейс: затыки, вопросы, выводы.", offers: 0 },
+      { id: "s2", name: "Шаг 2 · Своя стратегия", desc: "Заполнить свою БСМД и увидеть реальный маршрут действий.", offers: 0 },
+      { id: "s3", name: "Шаг 3 · Чек-ап и бот", desc: "Докрутить первый вход: диагностика → разбор → мостик в глубину.", offers: 0 },
+      { id: "pb", name: "Шаг 4 · Первые офферы", desc: "Мягко предложить БСМД тёплым людям и проверить отклик.", offers: 4 },
+      { id: "pc", name: "Шаг 5 · Упаковка", desc: "Собрать страницу, материалы и понятную систему прохождения.", offers: 1 }
     ];
     const SALES_TARGET = 3;
     const REVENUE_GOAL = 100000;
 
     /* ---------- Фокусы недель июля 2026 (из «График») ---------- */
     const JULY_WEEKS = [
-      { label: "1–5 июля", focus: "Дособрать свою БСМД, план на месяц + создать контент-завод." },
-      { label: "6–12 июля", focus: "Сборка MVP БСМД + старт прогрева, упаковка ТГ." },
-      { label: "13–19 июля", focus: "Упаковка чек-апа + сборка воронки: бот и ТГ-канал." },
-      { label: "20–26 июля", focus: "Старт продаж: первый этап через ТГ-канал." },
-      { label: "27–31 июля", focus: "Активные продажи + упаковка БСМД на платформу." }
+      { label: "1–5 июля", focus: "Собрать каркас БСМД и первый живой тест на себе." },
+      { label: "6–12 июля", focus: "Дособрать модули БСМД и пройти их как клиент." },
+      { label: "13–19 июля", focus: "Оформить чек-ап, разбор и мостик в Глубокое погружение." },
+      { label: "20–26 июля", focus: "Запустить первые мягкие приглашения через ТГ и сторис." },
+      { label: "27–31 июля", focus: "Собрать выводы, докрутить продукт и упаковку." }
     ];
 
     /* ---------- Состояние ---------- */
@@ -1669,9 +1639,9 @@
         weekFocus: "", days: {}, views: 80000,
         dates: { sale: "2026-07-20", mvp: "2026-07-12" },
         pack: [
-          { n: "Ядро продукта", p: 70 },
-          { n: "Чек-ап + бот", p: 28 },
-          { n: "Прогрев + приглашения", p: 18 }
+          { n: "БСМД", p: 35 },
+          { n: "Своя стратегия", p: 10 },
+          { n: "Чек-ап + бот", p: 28 }
         ]
       },
       days: {}
