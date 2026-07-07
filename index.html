@@ -1690,7 +1690,13 @@
       if (!S.days[key]) S.days[key] = emptyDay();
       return S.days[key];
     };
-    const saveDay = key => setJSON("day_" + key, S.days[key]);
+    const saveDay = key => {
+      const saved = setJSON("day_" + key, S.days[key]);
+      saved.then(() => {
+        if (key === todayKey) queueDayJournalSync("day-change");
+      });
+      return saved;
+    };
 
     const $ = id => document.getElementById(id);
     const haptic = () => { if (tg) try { tg.HapticFeedback.impactOccurred("medium"); } catch (e) {} };
@@ -1774,6 +1780,7 @@
       b.addEventListener("click", () => {
         S.settings.mode = b.dataset.mode;
         setJSON("settings", S.settings);
+        queueDayJournalSync("mode-change");
         renderToday();
       });
     });
@@ -2149,6 +2156,90 @@
 
     /* ---------- Синхронизация ---------- */
     const SHEET_ID = "1HkbtCJD6rxc2iojhy2kJyIUeZrINfkuWUn7SfuzhQ2c";
+    const DAY_JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycbweXcvd3xGf18BER-O9PjZKUOZDPGmGfEKAC3R600DeEb_LJc17CJGKOftRfoD4nK7y/exec";
+    const DAY_JOURNAL_PENDING_KEY = "asmi:day-journal-pending";
+    let dayJournalTimer = null;
+
+    function dayJournalConfigured() {
+      return /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/i.test(DAY_JOURNAL_ENDPOINT.trim());
+    }
+
+    function setJournalStatus(text) {
+      const status = $("syncStatus");
+      if (status) status.textContent = text;
+    }
+
+    function buildDayJournalPayload() {
+      const rec = dayRec(todayKey);
+      const state = rec.state || {};
+      const morning = rec.morning || {};
+      const evening = rec.evening || {};
+      const wb = rec.wb || {};
+      const pubs = rec.pubs || {};
+
+      return {
+        date: todayKey,
+        timestamp: new Date().toISOString(),
+        energy: state.energy || "",
+        mood: state.mood || "",
+        confidence: state.confidence || "",
+        body: state.body || "",
+        puzzle: (rec.puzzle && rec.puzzle.text ? rec.puzzle.text : "").trim(),
+        puzzleDone: !!(rec.puzzle && rec.puzzle.done),
+        walk: !!(morning.walk || evening.outside),
+        exercise: !!morning.ex,
+        breakfast: !!morning.brk,
+        wb: !!(wb.routine || wb.system),
+        reels: !!(pubs.reels && pubs.reels > 0),
+        eveningFamily: !!(evening.family || (rec.life && rec.life.people)),
+        urgent: (evening.urgent || "").trim(),
+        mode: S.settings.mode || "",
+        source: "Telegram Mini App"
+      };
+    }
+
+    function rememberPendingDayJournal(payload) {
+      try { localStorage.setItem(DAY_JOURNAL_PENDING_KEY, JSON.stringify(payload)); } catch (e) {}
+    }
+
+    function clearPendingDayJournal() {
+      try { localStorage.removeItem(DAY_JOURNAL_PENDING_KEY); } catch (e) {}
+    }
+
+    async function sendDayJournalSnapshot(reason) {
+      if (!dayJournalConfigured()) return false;
+      const payload = buildDayJournalPayload();
+      rememberPendingDayJournal(payload);
+      try {
+        await fetch(DAY_JOURNAL_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+          keepalive: true
+        });
+        clearPendingDayJournal();
+        try { localStorage.setItem("asmi:day-journal-last-sync", String(Date.now())); } catch (e) {}
+        setJournalStatus("✓ День сохранён в таблицу");
+        return true;
+      } catch (e) {
+        rememberPendingDayJournal(payload);
+        setJournalStatus("Локально сохранено. В таблицу отправлю при следующем открытии или изменении.");
+        return false;
+      }
+    }
+
+    function queueDayJournalSync(reason, delay = 900) {
+      if (!dayJournalConfigured()) return;
+      clearTimeout(dayJournalTimer);
+      dayJournalTimer = setTimeout(() => sendDayJournalSnapshot(reason), delay);
+    }
+
+    function retryPendingDayJournal() {
+      if (!dayJournalConfigured()) return;
+      const raw = localStorage.getItem(DAY_JOURNAL_PENDING_KEY);
+      if (raw) queueDayJournalSync("retry", 1200);
+    }
 
     async function fetchSheet(name) {
       const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(name)}`;
@@ -2285,6 +2376,8 @@
       renderFocus();
       renderMonth();
       renderWeek();
+      retryPendingDayJournal();
+      queueDayJournalSync("open", 1500);
       setActive();
     })();
   })();
